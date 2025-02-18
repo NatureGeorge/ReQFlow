@@ -1,2 +1,3 @@
-# ReQFlow
-ReQFlow: Rectified Quaternion Flow for Efficient and High-Quality Protein Backbone Generation
+<div align=center>
+  
+# ReQFlow: Rectified Quaternion Flow for Efficient and High-Quality Protein Backbone Generation
