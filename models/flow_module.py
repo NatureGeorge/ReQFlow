@@ -489,8 +489,8 @@ class FlowModule(LightningModule):
 
             finish_sample_time = time.time()
             sample_elapsed_time = finish_sample_time - start_sample_time
-            allocated = torch.cuda.memory_allocated(device) / (1024 ** 3)  # 转换为GB
-            reserved = torch.cuda.memory_reserved(device) / (1024 ** 3)    # 转换为GB
+            allocated = torch.cuda.memory_allocated(device) / (1024 ** 3)  
+            reserved = torch.cuda.memory_reserved(device) / (1024 ** 3)   
 
             bb_trajs = du.to_numpy(torch.stack(atom37_traj, dim=0).transpose(0, 1))
             bb_traj = bb_trajs[0]
