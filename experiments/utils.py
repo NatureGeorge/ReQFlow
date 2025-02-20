@@ -368,9 +368,6 @@ def save_traj(
     noise_path = os.path.join(output_dir, 'noise.pdb')
     x0_traj_path = os.path.join(output_dir, 'x0_traj.pdb')
 
-    np.save(os.path.join(output_dir, 'sample.npy'), sample)
-    np.save(os.path.join(output_dir, 'noise.npy'), noise)
-
     # Use b-factors to specify which residues are diffused.
     b_factors = np.tile((diffuse_mask * 100)[:, None], (1, 37))
 
