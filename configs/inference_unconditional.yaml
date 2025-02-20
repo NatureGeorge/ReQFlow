@@ -1,0 +1,32 @@
+# Unconditional sampling
+defaults:
+  - _inference
+  - _self_
+
+inference:
+  task: unconditional
+  ckpt_path: ./ckpts/reqflow_pdb_rectify/reqflow_pdb_rectify.ckpt # path to ckpts (e.g., ..../xxx.ckpt)
+  inference_subdir: ./inference_outputs/run_${now:%Y-%m-%d}_${now:%H-%M-%S} 
+  pmpnn_dir: ./ProteinMPNN
+  pt_hub_dir: ./.cache/torch/ # path to ESMfold
+  num_gpus: 4
+  for_rectify: False
+
+  samples:
+
+    min_length: 100
+    max_length: 300
+    length_step: 50
+    samples_per_length: 50
+    seq_per_sample: 8 # for ProteinMPNN
+
+
+  interpolant:
+    sampling:
+      num_timesteps: 500
+      do_sde: False
+    rots:
+      sample_schedule: exp
+
+
+
