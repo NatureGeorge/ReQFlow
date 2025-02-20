@@ -10,10 +10,15 @@
 If you found this project helpful to your research, please help star this repo. Thanks! 🤗
 
 
-Our **ReQFlow** achieves **state-of-the-art** performance in protein backbone generation while requiring significantly fewer sampling steps and substantially reducing inference time. For example, it is **37×** faster than RFDiffusion and **62×** faster than Genie2 when generating a backbone of length 300, demonstrating both its effectiveness and efficiency.
-
 </div>
 
+## 🔥 News
+
+* `2025/02/20` 💥 We release our work [ReQFlow]() for efficient and high-quality protein backbone generation!
+
+
+## Introduction
+Our **ReQFlow** achieves **state-of-the-art** performance in protein backbone generation while requiring significantly fewer sampling steps and substantially reducing inference time. For example, it is **37×** faster than RFDiffusion and **62×** faster than Genie2 when generating a backbone of length 300, demonstrating both its effectiveness and efficiency.
 <!-- <p align="center">
   <img src="assets/scheme_reqflow.png" width="64.4%">
   <img src="assets/log_speed_10_v2.png" width="30%">
@@ -29,10 +34,6 @@ Our **ReQFlow** achieves **state-of-the-art** performance in protein backbone ge
   <img src="assets/prot_vis.png" width="95%">
 </p>
 
-
-## 🔥 News
-
-* `2025/02/20` 💥 We release our work [ReQFlow]() for efficient and high-quality protein backbone generation!
 
 ## Installation
 ``` cmd
