@@ -35,7 +35,7 @@ Our **ReQFlow** achieves **state-of-the-art (SOTA)** performance in protein back
 </p>
 
 
-## Installation
+## ⚒️ Installation
 ``` cmd
 conda env create -f reqflow-env.yml
 
