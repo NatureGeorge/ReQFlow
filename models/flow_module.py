@@ -478,8 +478,6 @@ class FlowModule(LightningModule):
                 trans_1=trans_1, rotmats_1=rotmats_1, diffuse_mask=diffuse_mask
             )
 
-            prot_traj_dir = os.path.join(sample_dir, 'prot_traj.pt')
-            torch.save(prot_traj, prot_traj_dir)
             append = pd.DataFrame([[prot_traj_dir, sample_length]], columns=self.prot_df.columns)
             if not os.path.exists(os.path.join(self.inference_dir, 'prot_df.csv')):
                 append.to_csv(os.path.join(self.inference_dir, 'prot_df.csv'), index=False)
