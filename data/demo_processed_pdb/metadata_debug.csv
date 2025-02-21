@@ -1,0 +1,3 @@
+pdb_name,processed_path,raw_path,oligomeric_count,oligomeric_detail,resolution,structure_method,num_chains,quaternary_category,seq_len,modeled_seq_len,coil_percent,helix_percent,strand_percent,radius_gyration
+201l,./data/demo_processed_pdb/01/201l.pkl, ./data/demo_mmCIF/01/201l.cif,"1,1","monomeric,monomeric",2.0,x-ray diffraction,2,heteromer,452,379,0.24802110817941952,0.5435356200527705,0.079155672823219,2.288406907928523
+101m,./data/demo_processed_pdb/01/101m.pkl, ./data/demo_mmCIF/01/101m.cif,1,monomeric,2.07,x-ray diffraction,1,homomer,295,154,0.21428571428571427,0.7857142857142857,0.0,1.5547115955257929
