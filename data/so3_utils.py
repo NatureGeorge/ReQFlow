@@ -1564,29 +1564,3 @@ def calc_quat_wt_qt_q1(qt: torch.Tensor, q1: torch.Tensor, epsilon: float = 1e-6
     wt = u * phi_t[..., None]  # Shape: [B, N, 3]
     
     return wt
-
-if __name__ == "__main__":
-    import torch
-    import time
-
-    B, N = 128, 500
-    t = 0.5 
-    base_mat = torch.eye(3).unsqueeze(0).repeat(B, N, 1, 1).to('cuda')
-    mat = torch.randn(B, N, 3, 3).to('cuda')
-    mat = rotvec_to_rotmat(rotmat_to_rotvec(mat)) 
-
-    q0 = torch.randn(B, N, 4).to('cuda')
-    q0 = q0 / q0.norm(dim=-1, keepdim=True)
-    q1 = torch.randn(B, N, 4).to('cuda')
-    q1 = q1 / q1.norm(dim=-1, keepdim=True)
-    t_quat = torch.rand(B, N).to('cuda')
-
-    start_time = time.time()
-    R_t = geodesic_t(t, mat, base_mat)
-    end_time = time.time()
-    print(f"geodesic_t took {end_time - start_time:.6f} seconds.")
-
-    start_time = time.time()
-    qt = quaternion_slerp_exp(t_quat, q0, q1)
-    end_time = time.time()
-    print(f"quaternion_slerp_exp took {end_time - start_time:.6f} seconds.")
