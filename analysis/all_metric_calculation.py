@@ -6,7 +6,6 @@ import matplotlib.pyplot as plt
 import itertools
 from data import utils as du
 from analysis import metrics
-from analysis import utils as au
 import seaborn as sns
 import yaml
 import shutil
@@ -19,6 +18,7 @@ import time
 from datetime import datetime
 from openfold.np import residue_constants
 import mdtraj as md
+import argparse
 import logging
 logging.basicConfig(
     level=logging.INFO,
@@ -34,6 +34,7 @@ def file_generate(inference_dir, type=None):
         return int(''.join(filter(str.isdigit, name)) or 0)
     
     All_Results = pd.DataFrame()
+    SinglePDB_Metrics = pd.DataFrame()
 
     # get and sort length_folder
     for length_folder in sorted(os.listdir(inference_dir), key=natural_sort_key):
@@ -50,7 +51,9 @@ def file_generate(inference_dir, type=None):
                         Model_sample_pdb_path = os.path.join(sample_path, 'sample.pdb')
                     else:
                         Model_sample_pdb_path = os.path.join(sample_path, 'sample_1.pdb')
+                    
 
+                    SinglePDB_Metrics_row = {'length': length, 'pdb_path': Model_sample_pdb_path}
                     self_consistency_path = os.path.join(sample_path, 'self_consistency')
                     if os.path.isdir(self_consistency_path):
                         csv_path = os.path.join(self_consistency_path, 'sc_results.csv')
@@ -70,6 +73,10 @@ def file_generate(inference_dir, type=None):
                                 sc_results.insert(3, 'Designable', "False")
                             sc_results.insert(5, 'min_rmsd', sc_results['rmsd'].min())
                             sc_results.insert(6, 'max_tm_score', sc_results['tm_score'].max())
+                            SinglePDB_Metrics_row.update({
+                                'min_rmsd': sc_results['rmsd'].min(),
+                                'max_tm_score': sc_results['tm_score'].max()
+                            })
                             # put some not frequently used columns to the end
                             esmf_col = sc_results.pop('ESMF_sample_path')
                             sc_results['ESMF_sample_path'] = esmf_col
@@ -78,6 +85,20 @@ def file_generate(inference_dir, type=None):
                             sequence_col = sc_results.pop('sequence')
                             sc_results['sequence'] = sequence_col
                             All_Results = pd.concat([All_Results, sc_results], ignore_index=True)
+                    
+                    
+                    metrics = eval_secondary_structure(Model_sample_pdb_path)
+                    SinglePDB_Metrics_row.update({
+                                'helix_percent': metrics['helix_percent'],
+                                'strand_percent': metrics['strand_percent'],
+                                'coil_percent': metrics['coil_percent'],
+                                'non_coil_percent': metrics['non_coil_percent'],
+                                'radius_of_gyration': metrics['radius_of_gyration'],
+                                'ca_ca_deviation': metrics['ca_ca_deviation'],
+                                'ca_ca_valid_percent': metrics['ca_ca_valid_percent'],
+                                'num_ca_ca_clashes': metrics['num_ca_ca_clashes']
+                            })
+                    SinglePDB_Metrics = SinglePDB_Metrics._append(SinglePDB_Metrics_row, ignore_index=True)
 
     output_dir_1 = os.path.join(inference_dir, 'All_Results_Origin.csv')
     All_Results.to_csv(output_dir_1, index=False)
@@ -93,6 +114,10 @@ def file_generate(inference_dir, type=None):
 
     output_dir_5 = os.path.join(inference_dir, 'All_Sampled_PDB_and_Length.csv')
     All_Results[['length','Model_sample_pdb_path']].drop_duplicates().to_csv(output_dir_5, index=False)
+
+    output_dir_6 = os.path.join(inference_dir, 'Single_PDB_Metrics.csv')
+    SinglePDB_Metrics.to_csv(output_dir_6, index=False)
+
 
     print("############### File Generation End ###############")
 
@@ -112,6 +137,7 @@ def plot_time(inference_dir, type):
     inference_scaling = None
     model_type = None
     dataset = None
+    rectify = None
     if type.lower() in ['foldflow']:
         num_t = conf['inference']['flow']['num_t']
         noise_scale = conf['inference']['flow']['noise_scale']
@@ -143,6 +169,7 @@ def plot_time(inference_dir, type):
         sample_per_length = conf['inference']['samples']['samples_per_length']
         seq_per_sample = conf['inference']['samples']['seq_per_sample']
         dataset = conf['data']['dataset']
+        rectify = conf['data'].get('rectify', False)
 
     elif type.lower() in ['rfdiffusion']:
         num_t = conf['diffuser']['T']
@@ -172,6 +199,16 @@ def plot_time(inference_dir, type):
             f.write(f"SO3_inference_scaling: {inference_scaling}\n")
         if dataset:
             f.write(f"Dataset: {dataset}\n")
+        if rectify is not None:
+            f.write(f"Rectify: {rectify}\n")
+
+    if os.path.exists(os.path.join(inference_dir, 'Single_PDB_Metrics.csv')):
+        SS_Metrics = pd.read_csv(os.path.join(inference_dir, 'Single_PDB_Metrics.csv'))
+        sns.set(style='white')
+        g = sns.jointplot(data=SS_Metrics, x='helix_percent', y='strand_percent', kind='scatter', color='#4CB391')
+        g.set_axis_labels('Helix Percent', 'Strand Percent')
+        g.fig.suptitle(f'{type} Secondary Structure Percentages')
+        g.savefig(os.path.join(inference_dir, f'Secondary_Structure_Percentages_{type}.svg'))
 
     time_record_dir = os.path.join(inference_dir, 'time_records.csv')
     if not os.path.isfile(time_record_dir):
@@ -190,6 +227,8 @@ def plot_time(inference_dir, type):
     plt.title(f'{type} Average Times per Sample, num_t={num_t}, num_seq={seq_per_sample}')
     plt.legend(title='Time Type')
     plt.savefig(os.path.join(inference_dir, f'Average_Times_per_Sample_{type}_num_t_{num_t}_num_seq_{seq_per_sample}.png'))
+
+
 
 def designability_calculate(inference_dir):
 
@@ -226,6 +265,11 @@ def designability_calculate(inference_dir):
 
 
     print("\n########### Designability Calculation End ###########")
+    print(f"grouped_rmsd_below_2_ratio: {grouped_rmsd_mean:.3f} ± {grouped_rmsd_std:.3f}\n\n")
+    print(f"min_rmsd_range: {min_rmsd_mean:.3f} ± {min_rmsd_std:.3f}\n")
+    print(f"max_tm_score_range: {max_tm_score_mean:.3f} ± {max_tm_score_std:.3f}\n")
+    print(f"grouped_tm_score_greater_0.5_ratio: {grouped_tm_score_mean:.3f} ± {grouped_tm_score_std:.3f}\n\n")
+
     print(f"tm_score_mean: {tm_score_mean}")
     print(f"tm_score_std: {tm_score_std}")
     print(f"tm_score_range: {tm_score_mean:.3f} ± {tm_score_std:.3f}")
@@ -251,7 +295,11 @@ def designability_calculate(inference_dir):
 
     with open(os.path.join(inference_dir, "Metrics.txt"), "a") as f:
         f.write("\n########### Designability Calculation ###########\n")
-        
+        f.write(f"grouped_rmsd_below_2_ratio: {grouped_rmsd_mean:.3f} ± {grouped_rmsd_std:.3f}\n")
+        f.write(f"min_rmsd_range: {min_rmsd_mean:.3f} ± {min_rmsd_std:.3f}\n")
+        f.write(f"max_tm_score_range: {max_tm_score_mean:.3f} ± {max_tm_score_std:.3f}\n")
+        f.write(f"grouped_tm_score_greater_0.5_ratio: {grouped_tm_score_mean:.3f} ± {grouped_tm_score_std:.3f}\n\n")
+
         f.write(f"tm_score_mean: {tm_score_mean}\n")
         f.write(f"tm_score_std: {tm_score_std}\n")
         f.write(f"tm_score_range: {tm_score_mean:.3f} ± {tm_score_std:.3f}\n")
@@ -302,7 +350,6 @@ def diversity_calculate(inference_dir, type):
             sample_feats = du.parse_pdb_feats("sample", pdb_path)
             length_samples_feats.append(sample_feats)
 
-        # calculate pairwise TM-scores in this length
         if len(length_samples_feats) > 1:
             pairwise_tm_scores = []
 
@@ -319,7 +366,6 @@ def diversity_calculate(inference_dir, type):
                 length_diversity = sum(pairwise_tm_scores) / len(pairwise_tm_scores)
                 diversity_per_length.append(length_diversity)
 
-
     total_diversity = sum(diversity_per_length) / len(diversity_per_length)
     print(f"\n########### Diversity Calculation (Pairwise-TM, {type}) ###########")
     print(f"total_diversity: {total_diversity:.3f}")
@@ -327,60 +373,6 @@ def diversity_calculate(inference_dir, type):
         f.write(f"\n########### Diversity Calculation (Pairwise-TM, {type}) ###########\n")
         f.write(f"total_diversity: {total_diversity:.3f}\n")
 
-
-
-def maxcluster_calculate(output_dir, inference_dir, type):
-    if type.lower() in ['designable']:
-        pdb_list_dir = os.path.join(inference_dir, 'All_Sampled_PDB_Designable.txt')
-    elif type.lower() in ['all']:
-        pdb_list_dir = os.path.join(inference_dir, 'All_Sampled_PDB.txt')
-    os.chdir(output_dir)
-    print(f"pdb_list_dir: {pdb_list_dir}")
-    command = [
-    "maxcluster64bit",
-    "-l", pdb_list_dir,  
-    "./all_by_all_lite",
-    "-C", "2",
-    "-in",
-    "-Rl", "./tm_results.txt", 
-    "-Tm", "0.5"
-    ]
-    output_file = f"./output_{type}.txt"
-    try: 
-        print('running maxlcuster')
-        with open(output_file, "w") as out:
-            process = subprocess.run(command, stdout=out, stderr=subprocess.PIPE, text=True,cwd=output_dir)
-        print('maxcluster finished')
-        
-        with open(pdb_list_dir, "r") as f:
-            pdb_num = len(f.readlines())
-        
-        pattern = r'INFO\s+:\s+(\d+)\s+Clusters'
-        num_cluster = None
-        with open(output_file, "r") as f:
-            for line in f:
-                match = re.search(pattern, line)
-                if match:
-                    num_cluster = int(match.group(1))
-                    break
-        
-        if num_cluster is None:
-            raise ValueError("Number of clusters not found!")
-        
-        with open(os.path.join(inference_dir, "Metrics.txt"), "a") as f:
-            f.write(f"\n########### Diversity Calculation (MaxCluster, {type}) ###########\n")
-            f.write(f"Clusters: {num_cluster}\n")
-            f.write(f"Number of PDBs: {pdb_num}\n")
-            diversity = num_cluster / pdb_num
-            f.write(f"Diversity: {diversity:.3f}\n")
-
-        print("Maxcluster all end\n")
-
-
-    except subprocess.CalledProcessError as e:
-        print(f"Script execution failed with error: {e}")
-    except FileNotFoundError:
-        print("Script file not found! Please check the path.")
 
 
 
@@ -406,7 +398,7 @@ def run_foldseek(inference_dir, script_path, output_dir, database = "pdb", resul
     except subprocess.CalledProcessError as e:
         print(f"Script execution failed with error: {e}")
     except FileNotFoundError:
-        print("Script file not found! Please check the path.")
+        print("[Foldseek] Script file not found! Please check the path.")
 
 def foldseek_calculate(foldseek_output_dir):
     df = pd.read_csv(os.path.join(foldseek_output_dir, 'summary_tmscore.csv'))
@@ -437,6 +429,9 @@ def foldseek_calculate(foldseek_output_dir):
 
         
 def calc_mdtraj_metrics(pdb_path):
+    """
+    use mdtraj to calculate secondary structure and radius of gyration
+    """
     traj = md.load(pdb_path)
     pdb_ss = md.compute_dssp(traj, simplified=True)
     pdb_coil_percent = np.mean(pdb_ss == "C")
@@ -454,16 +449,18 @@ def calc_mdtraj_metrics(pdb_path):
 
 
 def calc_ca_ca_metrics(ca_pos, bond_tol=0.1, clash_tol=1.0):
+
     ca_pos = ca_pos * 10 
     ca_bond_dists = np.linalg.norm(
         ca_pos - np.roll(ca_pos, 1, axis=0), axis=-1
-    )[1:]
+    )[1:] 
     ca_ca_dev = np.mean(np.abs(ca_bond_dists - residue_constants.ca_ca))
     ca_ca_valid = np.mean(ca_bond_dists < (residue_constants.ca_ca + bond_tol))
     
     ca_ca_dists2d = np.linalg.norm(
         ca_pos[:, None, :] - ca_pos[None, :, :], axis=-1
     )
+  
     inter_dists = ca_ca_dists2d[np.where(np.triu(ca_ca_dists2d, k=1) > 0)]
     clashes = inter_dists < clash_tol
     return {
@@ -474,22 +471,36 @@ def calc_ca_ca_metrics(ca_pos, bond_tol=0.1, clash_tol=1.0):
 
 
 def eval_secondary_structure(pdb_path):
+
     mdtraj_metrics = calc_mdtraj_metrics(pdb_path)
-    
+
     traj = md.load(pdb_path)
     ca_indices = traj.topology.select('name CA')
     if len(ca_indices) == 0:
         raise ValueError(f"No CA atoms found in {pdb_path}")
-    ca_pos = traj.xyz[0, ca_indices, :] 
-    
+    ca_pos = traj.xyz[0, ca_indices, :]  
+
     ca_ca_metrics = calc_ca_ca_metrics(ca_pos)
-    
+
     combined_metrics = {**mdtraj_metrics, **ca_ca_metrics}
     return combined_metrics
 
 
-def calc_additional_metrics(inference_dir, model_type, base_dir=None, time_folder=None, length_values=None, num_samples=50):
+def calc_additional_metrics(inference_dir, model_type, base_dir=None, time_folder=None, length_values=None):
+    """
+    Calculate additional secondary structure and CA-CA related metrics and write to Metrics.txt.
+    para:
+    inference_dir: the directory of the inference results
+    model_type: the type of the model
+    base_dir: the base directory of the inference results
+    time_folder: the time folder of the inference results
+    length_values: the length values of the inference results
+    """
+
+    # if base_dir and time_folder are not provided, try to infer them from inference_dir
     if base_dir is None or time_folder is None:
+        # assume inference_dir is in the format of base_dir/time_folder
+        # e.g. ：/data/.../run_2025-01-15_10-48-15
         base_dir = os.path.dirname(inference_dir)
         time_folder = os.path.basename(inference_dir)
     
@@ -502,16 +513,15 @@ def calc_additional_metrics(inference_dir, model_type, base_dir=None, time_folde
                         length = int(item.split('_')[-1])
                         length_values.append(length)
                     except ValueError:
-                        logging.warning(f"error")
+                        logging.warning(f"Cannot extract length value from folder {item}, skipping.")
             length_values = sorted(length_values)
             if not length_values:
-                logging.error("error")
+                logging.error("No length values found in inference_dir")
                 return
             logging.info(f"Dynamically obtained length_values: {length_values}")
     
     time_path = os.path.join(base_dir, time_folder)
     
-    # 初始化用于收集所有指标的列表
     all_metrics = {
         'helix_percent': [],
         'strand_percent': [],
@@ -522,7 +532,6 @@ def calc_additional_metrics(inference_dir, model_type, base_dir=None, time_folde
         'num_ca_ca_clashes': []
     }
     
-    # 遍历每个长度文件夹
     for length in length_values:
         length_folder = f'length_{length}'
         length_path = os.path.join(time_path, length_folder)
@@ -535,6 +544,7 @@ def calc_additional_metrics(inference_dir, model_type, base_dir=None, time_folde
         num_ca_ca_clashes = []
         
         if os.path.exists(length_path):
+            num_samples =  len(os.listdir(length_path))
             for sample_num in range(num_samples):
                 sample_folder = f'sample_{sample_num}'
                 sample_path = os.path.join(length_path, sample_folder)
@@ -579,15 +589,15 @@ def calc_additional_metrics(inference_dir, model_type, base_dir=None, time_folde
             all_metrics['num_ca_ca_clashes'].extend(num_ca_ca_clashes)
         else:
             logging.info(f'No valid samples found in {length_path}')
-
+    
     metrics_df = pd.DataFrame(all_metrics)
     
     if not metrics_df.empty:
         metrics_summary = metrics_df.agg(['mean', 'std'])
-        
+
         logging.info(f"\n########### Additional Metrics Summary for {model_type} ###########")
         logging.info(metrics_summary)
-        
+
         with open(os.path.join(inference_dir, "Metrics.txt"), "a") as f:
             f.write(f"\n########### Additional Metrics Summary for {model_type} ###########\n")
             f.write(metrics_summary.to_string())
@@ -603,7 +613,7 @@ def clean_folder(inference_dir):
     for item_name in os.listdir(inference_dir):
         item_path = os.path.join(inference_dir, item_name)
         if os.path.isfile(item_path):
-            if item_name not in {"inference_conf.yaml", "time_records.csv", "config.yaml", "config.yml", "inferece_conf.yml"}:
+            if item_name not in {"inference_conf.yaml", "time_records.csv", "config.yaml", "config.yml", "inferece_conf.yml","prot_df.csv"}:
                 os.remove(item_path)
                 print(f"Deleted file: {item_path}")
 
@@ -614,35 +624,44 @@ def clean_folder(inference_dir):
 
 
 if __name__ == "__main__":
-    inference_dir = ''
-    script_path = 'run_foldseek_parallel.sh'
-    dataset_dir = 'FoldSeek/FoldSeek_PDB_Database'
-    pdb_list_dir = os.path.join(inference_dir, 'All_Sampled_PDB.txt')
-    designable_pdb_list_dir = os.path.join(inference_dir, 'All_Sampled_PDB_Designable.txt')
-    output_dir = inference_dir # in most cases, the output_dir is the same as inference_dir
-    database = 'pdb'
-    
 
-    # type = 'FrameFlow'
-    type = 'QFlow'
-    # type = "FoldFlow"
+    parser = argparse.ArgumentParser(description="Run QFlow evaluation.")
+    # Required arguments
+    parser.add_argument("--inference_dir", required=True, help="Directory containing inference results.")
+    parser.add_argument("--script_path", required=True, help="Absolute Path to the FoldSeek script.")
+    parser.add_argument("--dataset_dir", required=True, help="Directory containing the FoldSeek dataset.")
+
+    # Optional arguments with defaults
+    parser.add_argument("--database", default="pdb", help="Database to use (e.g., pdb).")
+    parser.add_argument("--type", default="qflow", help="Type of evaluation (qflow, FrameFlow, FoldFlow, FrameDiff, Genie2, RFdiffusion).")
+
+
+    args = parser.parse_args()
+
+    inference_dir = args.inference_dir
+    script_path = args.script_path
+    dataset_dir = args.dataset_dir
+    output_dir = inference_dir  # Use inference_dir if output_dir is not provided
+    database = args.database
+    type = args.type
+
     start_time = time.time()
     clean_folder(inference_dir)
     file_generate(inference_dir, type=type)
     plot_time(inference_dir, type=type)
     designability_calculate(inference_dir)
-    calc_additional_metrics(inference_dir, type, base_dir=None, time_folder=None, length_values=None, num_samples=50)
-    # run_foldseek(inference_dir, script_path, output_dir, database, dataset_dir=dataset_dir)
+    calc_additional_metrics(inference_dir, type, base_dir=None, time_folder=None, length_values=None)
 
+    run_foldseek(inference_dir, script_path, output_dir, database, dataset_dir=dataset_dir)
     with concurrent.futures.ProcessPoolExecutor() as executor:
-        future_maxcluster_designable = executor.submit(maxcluster_calculate, output_dir, inference_dir, type='Designable')
-        future_maxcluster_all = executor.submit(maxcluster_calculate, output_dir, inference_dir, type='All')
         future_diversity_designable = executor.submit(diversity_calculate, inference_dir, type='Designable')
         future_diversity_all = executor.submit(diversity_calculate, inference_dir, type='All')
 
-    concurrent.futures.wait([future_maxcluster_designable,future_maxcluster_all, future_diversity_designable, future_diversity_all])
+    # wait for all the futures to complete
+    concurrent.futures.wait([future_diversity_designable, future_diversity_all])
     
-    # foldseek_calculate(output_dir)
+
+    foldseek_calculate(output_dir)
     total_time = time.time() - start_time
     with open(os.path.join(output_dir, "Metrics.txt"), "a") as f:
         f.write(f"\nTotal Evaluation time: {total_time} seconds\n")
