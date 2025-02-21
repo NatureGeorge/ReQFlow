@@ -1,7 +1,7 @@
 <div align=center>
   
 # ⚡️ReQFlow: Rectified Quaternion Flow for Efficient and High-Quality Protein Backbone Generation
-[![arXiv](https://img.shields.io/badge/arXiv-2401.03048-b31b1b?style=flat&logo=arxiv)]()
+[![arXiv](https://img.shields.io/badge/arXiv-2502.14637-b31b1b?style=flat&logo=arxiv)](https://arxiv.org/abs/2502.14637)
 [![Checkpoint](https://img.shields.io/badge/Download-Checkpoint-brightgreen?style=flat&logo=google-drive)](https://drive.google.com/drive/folders/1HboOCWcE7KeNMkAZGR7Cq4wLQ8UhUKXy?usp=sharing)
 [![Project Page](https://img.shields.io/badge/Project-Website-blue?style=flat&logo=github)]()
 [![Try Demo](https://img.shields.io/badge/Try%20Demo-Online-orange?style=flat&logo=render)](https://your-demo-url.onrender.com)
@@ -14,7 +14,7 @@ If you found this project helpful to your research, please help star this repo. 
 
 ## 🔥 News
 
-* `2025/02/20` 💥 We release our work [ReQFlow]() for efficient and high-quality protein backbone generation!
+* `2025/02/20` 💥 We release our work [ReQFlow](https://arxiv.org/abs/2502.14637) for efficient and high-quality protein backbone generation!
 
 
 ## 🧩 Introduction
@@ -74,7 +74,7 @@ inference:
   ckpt_path: ./ckpts/reqflow_pdb_rectify/reqflow_pdb_rectify.ckpt # path to ckpts
   inference_subdir: ./inference_outputs/run_${now:%Y-%m-%d}_${now:%H-%M-%S} # path to inference outputs
   pmpnn_dir: ./ProteinMPNN
-  pt_hub_dir: ./.cache/torch/ # path to ESMfold
+  pt_hub_dir: ./.cache/torch/ # path to ESMFold
   num_gpus: 4
 
   samples:
@@ -95,7 +95,7 @@ Once you have specified the configurations, you can run inference using the foll
 ```cmd
 python -W ignore experiments/inference_se3_flows.py -cn inference_unconditional
 ```
-During inference, we evaluate results using the **ProteinMPNN** and **ESMfold** following [FrameDiff](https://github.com/jasonkyuyim/se3_diffusion). The outputs will be saved as follows,
+During inference, we evaluate results using the **ProteinMPNN** and **ESMFold** following [FrameDiff](https://github.com/jasonkyuyim/se3_diffusion). The outputs will be saved as follows,
 ```
 inference_outputs
 └── expriment_name                      # Default is date time of inference
@@ -164,6 +164,17 @@ python -W ignore experiments/train_se3_flows.py -cn train_pdb_rectify
 ```
 ## 📌 Citation
 If you find this work useful for your research, please consider citing it.
+```bibtex
+@misc{yue2025reqflowrectifiedquaternionflow,
+      title={ReQFlow: Rectified Quaternion Flow for Efficient and High-Quality Protein Backbone Generation}, 
+      author={Angxiao Yue and Zichong Wang and Hongteng Xu},
+      year={2025},
+      eprint={2502.14637},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG},
+      url={https://arxiv.org/abs/2502.14637}, 
+}
+```
 
 ## 👍 Acknowledgments
 Thanks to [FrameFlow](https://github.com/microsoft/protein-frame-flow?tab=readme-ov-file), [FrameDiff](https://github.com/jasonkyuyim/se3_diffusion), [FoldFlow](https://github.com/DreamFold/FoldFlow) for their great work and codebase, which served as the foundation for developing ReQFlow.
