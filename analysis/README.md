@@ -2,50 +2,7 @@
 To evaluate the generation, we use designability, diversity and novelty. Here is the way to calculate these metrics from inference output.
 
 ## Install tools
-We use Foldseek and MaxCluster in our evaluation. Follow the instructions to install them.
-
-### Install MaxCluster
-
-MaxCluster is used to evaluate diversity. Document: https://www.sbg.bio.ic.ac.uk/~maxcluster/
-
-First download from MaxCluster download homepage https://www.sbg.bio.ic.ac.uk/~maxcluster/download.html. Then get into the path, e.g. `Downloads`
-
-```
-cd ~/Downloads
-```
-
-Then move to usual place for software:
-
-```
-sudo mv maxcluster64bit /usr/local/bin/
-```
-
-Ensure the file has the necessary execute permissions:
-
-```
-sudo chmod +x /usr/local/bin/maxcluster64bit
-```
-
-For convenience, create a symbolic link to run the program using a simpler command:
-
-```
-sudo ln -s /usr/local/bin/maxcluster64bit /usr/local/bin/maxcluster
-```
-
-And test the installation by running
-
-```
-maxcluster -h
-```
-
-This command should display the help information, confirming that MaxCluster is installed correctly.
-
-<!-- To evaluate diversity (as mentioned in `FrameDiff`), run
-```
-maxcluster64bit -l <pdb_list> ./all_by_all_lite -C 2 -in -Rl ./tm_results.txt -Tm 0.5 >  ./output.txt
-```
-
-Where `<pdb_list>` is a text file with one pdb path per line of the proteins to cluster. -->
+We use Foldseek in our evaluation. Follow the instructions to install it.
 
 ### Install FoldSeek
 

@@ -375,64 +375,6 @@ def diversity_calculate(inference_dir, type):
 
 
 
-def maxcluster_calculate(output_dir, inference_dir, type):
-    if type.lower() in ['designable']:
-        pdb_list_dir = os.path.join(inference_dir, 'All_Sampled_PDB_Designable.txt')
-    elif type.lower() in ['all']:
-        pdb_list_dir = os.path.join(inference_dir, 'All_Sampled_PDB.txt')
-    os.chdir(output_dir)
-    print(f"pdb_list_dir: {pdb_list_dir}")
-    command = [
-    "maxcluster64bit",
-    "-l", pdb_list_dir, 
-    "./all_by_all_lite",
-    "-C", "2",
-    "-in",
-    "-Rl", "./tm_results.txt", 
-    "-Tm", "0.5"
-    ]
-    output_file = f"./output_{type}.txt"
-    try: 
-        print('running maxlcuster')
-        with open(output_file, "w") as out:
-            process = subprocess.run(command, stdout=out, stderr=subprocess.PIPE, text=True,cwd=output_dir)
-        print('maxcluster finished')
-        
-        with open(pdb_list_dir, "r") as f:
-            pdb_num = len(f.readlines())
-        
-        pattern = r'INFO\s+:\s+(\d+)\s+Clusters'
-        num_cluster = None
-        with open(output_file, "r") as f:
-            for line in f:
-                match = re.search(pattern, line)
-                if match:
-                    num_cluster = int(match.group(1))
-                    break
-        
-        if num_cluster is None:
-            raise ValueError("Number of clusters not found!")
-        
-        diversity = num_cluster / pdb_num
-        print(f"\n########### Diversity Calculation (MaxCluster, {type}) ###########\n")
-        print(f"diversity: {diversity:.3f}")
-
-
-        with open(os.path.join(inference_dir, "Metrics.txt"), "a") as f:
-            f.write(f"\n########### Diversity Calculation (MaxCluster, {type}) ###########\n")
-            f.write(f"Clusters: {num_cluster}\n")
-            f.write(f"Number of PDBs: {pdb_num}\n")
-            f.write(f"Diversity: {diversity:.3f}\n")
-
-        print("Maxcluster all end\n")
-
-
-    except subprocess.CalledProcessError as e:
-        print(f"Script execution failed with error: {e}")
-    except FileNotFoundError:
-        print("[MaxCluster] Script file not found! Please check the path.")
-
-
 
 def run_foldseek(inference_dir, script_path, output_dir, database = "pdb", result_summary = None, dataset_dir = None):
     '''
@@ -724,13 +666,11 @@ if __name__ == "__main__":
 
     run_foldseek(inference_dir, script_path, output_dir, database, dataset_dir=dataset_dir)
     with concurrent.futures.ProcessPoolExecutor() as executor:
-        future_maxcluster_designable = executor.submit(maxcluster_calculate, output_dir, inference_dir, type='Designable')
-        future_maxcluster_all = executor.submit(maxcluster_calculate, output_dir, inference_dir, type='All')
         future_diversity_designable = executor.submit(diversity_calculate, inference_dir, type='Designable')
         future_diversity_all = executor.submit(diversity_calculate, inference_dir, type='All')
 
     # wait for all the futures to complete
-    concurrent.futures.wait([future_maxcluster_designable,future_maxcluster_all, future_diversity_designable, future_diversity_all])
+    concurrent.futures.wait([future_diversity_designable, future_diversity_all])
     
 
     foldseek_calculate(output_dir)
