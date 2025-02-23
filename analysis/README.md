@@ -58,7 +58,7 @@ The script requires several command-line arguments for configuration.  Here's a 
 + `--script_path` (Required): The *ABSOLUTE* path to the `run_foldseek_parallel.sh` script. e.g. `path/to/ReQFlow/analysis/run_foldseek_parallel.sh`
 + `--dataset_dir` (Required): The directory containing the FoldSeek dataset as mentioned in Foldesek installation. e.g. `path/to/FoldSeek_PDB_Database`
 + `--database` (Optional): The database to use for FoldSeek (e.g., pdb). Defaults to pdb. 
-+ `--type` (Optional): Type of evaluation (qflow, FrameFlow, FoldFlow, FrameDiff, Genie2, RFdiffusion)). Defaults to qflow.
++ `--type` (Optional): Type of evaluation (qflow, FrameFlow, FoldFlow, FrameDiff, Genie2, RFdiffusion). Defaults to qflow.
 
 **Notice**, to avoid potential issues, the script would delete unrelavent files in inference directory ('Reset' the folder). 
 Besides, running foldseek would use a huge amount of CPU cores. By default, the script utilize 50% of all cores. You can modify in line 101 of `run_foldseek_parallel.sh`.

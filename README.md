@@ -138,7 +138,7 @@ data:
     is_training: True
     debug: False
     num_devices: 4
-    warm_start: null
+    warm_start: null # keep it null on first stage
     warm_start_cfg_override: True
     training:
       aux_loss_t_pass: 0.50
@@ -159,12 +159,14 @@ python -W ignore experiments/train_se3_flows.py -cn train_pdb_base
 ### ReQFlow
 One of our key contributions is **rectifying** the SE(3) generation trajectories in Euclidean/**Quaternion** space to accelerate inference and enhance the designability of the generated protein backbones. We recitify the QFlow model with the generated noise-sample pairs (see `noise.pdb` and `sample.pdb` in `inference_outputs`).
 
-We construct the rectify dataset by converting the generated `.pdb` files into a compatible format. You can follow instructions [here](data/README.md) to do it.
+We construct the rectify dataset by converting the generated `.pdb` files into a compatible format. You can follow instructions [here](data/README.md) to do it. 
 
-Once the rectify dataset is obtained, the training pipeline remains the same as QFlow. The configurations can be found in `configs/train_pdb_rectify.yaml`, and the command to run it is:
+Once the rectify dataset is obtained, the training pipeline remains the same as QFlow. The configurations can be found in `configs/train_pdb_rectify.yaml`, and make sure `experiment.warm_start` is set to the ckpt you get from first stage training. The command to run it is:
 ```cmd
 python -W ignore experiments/train_se3_flows.py -cn train_pdb_rectify
 ```
+
+The training of SCOPe dataset is the same as PDB dataset.
 ## 📌 Citation
 If you find this work useful for your research, please consider citing it.
 ```bibtex
