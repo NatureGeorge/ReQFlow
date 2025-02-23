@@ -34,7 +34,7 @@ I will use `path/to/FoldSeek_PDB_Database` as example.Get to the parent folder (
 cd path/to/FoldSeek_PDB_Database
 ```
 
-And create database. `PDB` is the name for database, `pdb` is a 'nickname' (will be used in `All_Metric_Calculation.py` as `database`). `tmp` is the folder to store temp file.
+And create database. `PDB` is the name for database, `pdb` is a 'nickname' (will be used in `all_metric_calculation.py` as `database`). `tmp` is the folder to store temp file.
 
 ```
 foldseek databases PDB pdb tmp 
@@ -47,11 +47,11 @@ If you see the information of foldseek, congratulations!
 
 ## Start Evaluation
 
-`All_Metric_Calculation.py` is designed for calculate the metrics. Start via running:
+`all_metric_calculation.py` is designed for calculate the metrics. Start via running:
 
 ```
 cd ReQFlow
-python analysis/All_Metric_Calculation.py --inference_dir path/to/dir  --script_path abs/path/to/run_foldseek_parallel.sh  --dataset_dir /path/to/FoldSeek_PDB_Database
+python analysis/all_metric_calculation.py --inference_dir path/to/dir  --script_path abs/path/to/run_foldseek_parallel.sh  --dataset_dir /path/to/FoldSeek_PDB_Database
 ```
 The script requires several command-line arguments for configuration.  Here's a breakdown:
 + `--inference_dir` (Required): The directory containing the inference results from QFlow. e.g. `path/to/ReQFlow/Inference_Results/15D_11M_2024Y_12h_00m_52s`
