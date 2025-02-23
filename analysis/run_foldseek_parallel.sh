@@ -25,11 +25,9 @@ mkdir -p "$output_dir"
 # Write the header to the result summary file
 echo -e "PDB File,Max TM-score,Designable" > "$result_summary"
 
-# 创建一个临时目录用于存放并行结果文件
 tmp_result_dir="${output_dir}/parallel_results"
 mkdir -p "$tmp_result_dir"
 
-# 定义处理单个PDB文件的函数，通过并行执行
 process_pdb() {
     local pdb_path="$1"
     local output_dir="$2"
@@ -38,7 +36,7 @@ process_pdb() {
     local designable_list="$5"
 
     if [ ! -f "$pdb_path" ]; then
-        sleep 0.1  # 等待片刻再检查
+        sleep 0.1
         if [ ! -f "$pdb_path" ]; then
             echo "File not found: $pdb_path"
             exit 1
@@ -54,7 +52,7 @@ process_pdb() {
     tmp_folder="$output_dir/tmp_${pdb_name}"
 
     echo "Checking file: $pdb_path"
-    ls -l "$pdb_path"  # 列出文件详细信息
+    ls -l "$pdb_path"
     echo "Running foldseek with:"
     echo "  Input PDB: $pdb_path"
     echo "  Database: $database"
@@ -68,7 +66,6 @@ process_pdb() {
         --tmscore-threshold 0.0 \
         --format-output query,target,alntmscore,lddt
 
-    # 确保对齐文件存在
     if [ ! -f "$aln_file" ]; then
         echo "No alignment result for $pdb_path" >&2
         exit 0
@@ -86,15 +83,13 @@ process_pdb() {
         designable=0
     fi
 
-    # 将结果写入一个临时文件（使用PDB名区分）
     echo -e "$pdb_path,$max_tmscore,$designable" > "${tmp_result_dir}/${pdb_name}_result.csv"
 
-    # 清理临时目录
     rm -rf "$tmp_folder"
     rm -f "$aln_file"
 }
 
-export -f process_pdb  # 允许parallel使用该函数
+export -f process_pdb
 export output_dir database tmp_result_dir designable_list
 
 CPU_CORES=$(nproc)
