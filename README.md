@@ -14,7 +14,7 @@ If you found this project helpful to your research, please help star this repo. 
 </div>
 
 ## 🔥 News
-*   `2025/02/24` 💥 Thanks to [@NielsRogge](https://github.com/NielsRogge) for [issue#1](https://github.com/AngxiaoYue/ReQFlow/issues/1)🤗, our checkpoints are hosted on [Hugging Face](https://huggingface.co/AngxiaoYue/ReQFlow/tree/main) now.
+*   `2025/02/24` 💥 Thanks to <mark>[@NielsRogge](https://github.com/NielsRogge)</mark> for [issue#1](https://github.com/AngxiaoYue/ReQFlow/issues/1)🤗, our model weights are hosted on [Hugging Face](https://huggingface.co/AngxiaoYue/ReQFlow/tree/main) now.
 * `2025/02/20` 💥 We release our work [ReQFlow](https://arxiv.org/abs/2502.14637) for efficient and high-quality protein backbone generation!
 
 
@@ -52,7 +52,7 @@ pip install -e .
 ```
 
 ## 🚀 Quick Inference
-You can download our [checkpoints](https://drive.google.com/drive/folders/1HboOCWcE7KeNMkAZGR7Cq4wLQ8UhUKXy?usp=sharing) or use your own. If you use our checkpoints, the directory should be orignized as:
+Our model weights are available for download on [Hugging Face](https://huggingface.co/AngxiaoYue/ReQFlow/tree/main) or [Google Drive](https://drive.google.com/drive/folders/1HboOCWcE7KeNMkAZGR7Cq4wLQ8UhUKXy?usp=sharing). You can also use your own weights. If using ours, please organize the directory as follows:
 ```
 ReQFlow
 ├── ckpts
