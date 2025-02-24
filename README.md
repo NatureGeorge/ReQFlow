@@ -2,6 +2,7 @@
 
 # ⚡️ReQFlow: Rectified Quaternion Flow for Efficient and High-Quality Protein Backbone Generation
 [![arXiv](https://img.shields.io/badge/arXiv-2502.14637-b31b1b?style=flat&logo=arxiv)](https://arxiv.org/abs/2502.14637)
+[![Hugging Face](https://img.shields.io/badge/Hugging%20Face-Model-orange?style=flat&logo=huggingface)](https://huggingface.co/AngxiaoYue/ReQFlow/tree/main)
 [![Checkpoint](https://img.shields.io/badge/Download-Checkpoint-brightgreen?style=flat&logo=google-drive)](https://drive.google.com/drive/folders/1HboOCWcE7KeNMkAZGR7Cq4wLQ8UhUKXy?usp=sharing)
 [![Project Page](https://img.shields.io/badge/Project-Website-blue?style=flat&logo=github)]()
 [![Try Demo](https://img.shields.io/badge/Try%20Demo-Online-orange?style=flat&logo=render)](https://your-demo-url.onrender.com)
@@ -13,7 +14,7 @@ If you found this project helpful to your research, please help star this repo. 
 </div>
 
 ## 🔥 News
-
+*   `2025/02/24` 💥 Thanks to [@NielsRogge](https://github.com/NielsRogge) for [issue#1](https://github.com/AngxiaoYue/ReQFlow/issues/1)🤗, our checkpoints are hosted on [Hugging Face](https://huggingface.co/AngxiaoYue/ReQFlow/tree/main) now.
 * `2025/02/20` 💥 We release our work [ReQFlow](https://arxiv.org/abs/2502.14637) for efficient and high-quality protein backbone generation!
 
 
