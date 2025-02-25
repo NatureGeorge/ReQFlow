@@ -14,7 +14,7 @@ If you found this project helpful to your research, please help star this repo. 
 </div>
 
 ## 🔥 News
-*   `2025/02/24` 💥 Our model weights are hosted on [Hugging Face](https://huggingface.co/AngxiaoYue/ReQFlow/tree/main) now 😊.
+*   `2025/02/24` 💥 Our model weights are hosted on [Hugging Face](https://huggingface.co/AngxiaoYue/ReQFlow/tree/main) and [Google Drive](https://drive.google.com/drive/folders/1HboOCWcE7KeNMkAZGR7Cq4wLQ8UhUKXy?usp=sharing) now 😊.
 * `2025/02/20` 💥 We release our work [ReQFlow](https://arxiv.org/abs/2502.14637) for efficient and high-quality protein backbone generation!
 
 
