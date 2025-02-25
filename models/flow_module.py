@@ -460,7 +460,6 @@ class FlowModule(LightningModule):
             diffuse_mask = torch.ones(1, sample_length, device=device)
 
 
-        self.prot_df = pd.DataFrame(columns=['prot_path','length'])
         for i in range(num_batch):
             sample_dir = sample_dirs[i]
             
@@ -478,11 +477,6 @@ class FlowModule(LightningModule):
                 trans_1=trans_1, rotmats_1=rotmats_1, diffuse_mask=diffuse_mask
             )
 
-            append = pd.DataFrame([[prot_traj_dir, sample_length]], columns=self.prot_df.columns)
-            if not os.path.exists(os.path.join(self.inference_dir, 'prot_df.csv')):
-                append.to_csv(os.path.join(self.inference_dir, 'prot_df.csv'), index=False)
-            else:
-                append.to_csv(os.path.join(self.inference_dir, 'prot_df.csv'), mode='a', header=False, index=False)
 
 
             finish_sample_time = time.time()
