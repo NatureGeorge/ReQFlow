@@ -8,9 +8,6 @@
 [![Try Demo](https://img.shields.io/badge/Try%20Demo-Online-orange?style=flat&logo=render)](https://your-demo-url.onrender.com)
 
 
-If you found this project helpful to your research, please help star this repo. Thanks! 🤗
-
-
 </div>
 
 ## 🔥 News
