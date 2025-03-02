@@ -16,7 +16,7 @@
 
 
 ## 🧩 Introduction
-Our **ReQFlow** achieves **state-of-the-art (SOTA)** performance in protein backbone generation while requiring significantly fewer sampling steps and substantially reducing inference time. For example, it is **37×** faster than RFDiffusion and **62×** faster than Genie2 when generating a backbone of length 300, demonstrating both its effectiveness and efficiency.
+Our <span style="color:red">**ReQFlow**</span> achieves <span style="color:red">**state-of-the-art (SOTA)**</span> performance in protein backbone generation while requiring significantly fewer sampling steps and substantially reducing inference time. For example, it is <span style="color:red">**37×**</span> faster than RFDiffusion and <span style="color:red">**62×**</span> faster than Genie2 when generating a backbone of length 300, demonstrating both its effectiveness and efficiency.
 <!-- <p align="center">
   <img src="assets/scheme_reqflow.png" width="64.4%">
   <img src="assets/log_speed_10_v2.png" width="30%">
