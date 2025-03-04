@@ -61,7 +61,7 @@ The script requires several command-line arguments for configuration.  Here's a 
 + `--type` (Optional): Type of evaluation (qflow, FrameFlow, FoldFlow, FrameDiff, Genie2, RFdiffusion). Defaults to qflow.
 
 **Notice**, to avoid potential issues, the script would delete unrelavent files in inference directory ('Reset' the folder). 
-Besides, running foldseek would use a huge amount of CPU cores. By default, the script utilize 50% of all cores. You can modify in line 101 of `run_foldseek_parallel.sh`.
+Besides, running foldseek would use a huge amount of CPU cores. By default, the script utilize 50% of all cores. You can modify in line 96 of `run_foldseek_parallel.sh`.
 
 The script will generate some files. Important ones include: 
 
