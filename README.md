@@ -34,6 +34,9 @@ Our <span style="color:red">**ReQFlow**</span> achieves <span style="color:red">
 
 
 ## ⚒️ Installation
+We recommend using [mamba](https://mamba.readthedocs.io/en/latest/).
+If using mamba then use `mamba` in place of `conda`.
+
 ``` cmd
 conda env create -f reqflow-env.yml
 
@@ -47,6 +50,15 @@ pip install torch-scatter -f https://data.pyg.org/whl/torch-2.0.0+cu117.html
 pip install -e .
 
 ```
+> [!WARNING]  
+> You will likely run into the follow error from DeepSpeed
+```bash
+ModuleNotFoundError: No module named 'torch._six'
+```
+If so, replace `from torch._six import inf` with `from torch import inf` or `from math import inf`.
+* `/path/to/envs/site-packages/deepspeed/runtime/utils.py`
+* `/path/to/envs/site-packages/deepspeed/runtime/zero/stage_1_and_2.py`
+
 
 ## 🚀 Quick Inference
 Our model weights are available for download on [Hugging Face](https://huggingface.co/AngxiaoYue/ReQFlow/tree/main) or [Google Drive](https://drive.google.com/drive/folders/1HboOCWcE7KeNMkAZGR7Cq4wLQ8UhUKXy?usp=sharing). You can also use your own weights. If using ours, please organize the directory as follows:
