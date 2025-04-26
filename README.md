@@ -50,6 +50,7 @@ pip install --upgrade deepspeed
 # Current directory should be ReQFlow/
 
 pip install -e .
+```
 
 ## 🚀 Quick Inference
 Our model weights are available for download on [Hugging Face](https://huggingface.co/AngxiaoYue/ReQFlow/tree/main) or [Google Drive](https://drive.google.com/drive/folders/1HboOCWcE7KeNMkAZGR7Cq4wLQ8UhUKXy?usp=sharing). You can also use your own weights. If using ours, please organize the directory as follows:
