@@ -1,9 +1,6 @@
 <div align=center>
 
-# ⚡️ReQFlow: Rectified Quaternion Flow for Efficient and High-Quality Protein Backbone Generation 
-
-<div align="center"><span style="font-size:1.5em;"><b>[ICML 2025]</b></span></div>
-<br>
+# ⚡️ReQFlow: Rectified Quaternion Flow for Efficient and High-Quality Protein Backbone Generation [ICML 2025]
 
 [![arXiv](https://img.shields.io/badge/arXiv-2502.14637-b31b1b?style=flat&logo=arxiv)](https://arxiv.org/abs/2502.14637)
 [![Hugging Face](https://img.shields.io/badge/Hugging%20Face-Model-orange?style=flat&logo=huggingface)](https://huggingface.co/AngxiaoYue/ReQFlow/tree/main)
