@@ -1,6 +1,10 @@
 <div align=center>
 
-# ⚡️ReQFlow: Rectified Quaternion Flow for Efficient and High-Quality Protein Backbone Generation [ICML 2025]
+# ⚡️ReQFlow: Rectified Quaternion Flow for Efficient and High-Quality Protein Backbone Generation 
+
+<div align="center"><span style="font-size:1.5em;"><b>[ICML 2025]</b></span></div>
+<br>
+
 [![arXiv](https://img.shields.io/badge/arXiv-2502.14637-b31b1b?style=flat&logo=arxiv)](https://arxiv.org/abs/2502.14637)
 [![Hugging Face](https://img.shields.io/badge/Hugging%20Face-Model-orange?style=flat&logo=huggingface)](https://huggingface.co/AngxiaoYue/ReQFlow/tree/main)
 [![Checkpoint](https://img.shields.io/badge/Download-Checkpoint-brightgreen?style=flat&logo=google-drive)](https://drive.google.com/drive/folders/1HboOCWcE7KeNMkAZGR7Cq4wLQ8UhUKXy?usp=sharing)
@@ -11,7 +15,7 @@
 </div>
 
 ## 🔥 News
-* `2025/05/02` 💥 <span style="color:red"><b>ReQFlow is accepted by ICML 2025！🎉🎉</b></span>
+* `2025/05/02` 💥 <span style="color:red"><b>ReQFlow is accepted by ICML 2025！！🎉🎉</b></span>
 * `2025/02/24` 💥 Our model weights are hosted on [Hugging Face](https://huggingface.co/AngxiaoYue/ReQFlow/tree/main) and [Google Drive](https://drive.google.com/drive/folders/1HboOCWcE7KeNMkAZGR7Cq4wLQ8UhUKXy?usp=sharing) now 😊.
 * `2025/02/20` 💥 We release our work [ReQFlow](https://arxiv.org/abs/2502.14637) for efficient and high-quality protein backbone generation!
 
