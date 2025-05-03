@@ -8,8 +8,21 @@
 [![Project Page](https://img.shields.io/badge/Project-Website-blue?style=flat&logo=github)]()
 [![Try Demo](https://img.shields.io/badge/Try%20Demo-Online-orange?style=flat&logo=render)](https://your-demo-url.onrender.com)
 
-
 </div>
+
+## 📌 Citation
+If you find this work useful for your research, please consider citing it.
+```bibtex
+@misc{yue2025reqflowrectifiedquaternionflow,
+      title={ReQFlow: Rectified Quaternion Flow for Efficient and High-Quality Protein Backbone Generation}, 
+      author={Angxiao Yue and Zichong Wang and Hongteng Xu},
+      year={2025},
+      eprint={2502.14637},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG},
+      url={https://arxiv.org/abs/2502.14637}, 
+}
+```
 
 ## 🔥 News
 * `2025/05/02` 💥 <span style="color:red"><b>ReQFlow is accepted by ICML 2025！！🎉🎉</b></span>
@@ -170,19 +183,6 @@ python -W ignore experiments/train_se3_flows.py -cn train_pdb_rectify
 ```
 
 The training of SCOPe dataset is the same as PDB dataset.
-## 📌 Citation
-If you find this work useful for your research, please consider citing it.
-```bibtex
-@misc{yue2025reqflowrectifiedquaternionflow,
-      title={ReQFlow: Rectified Quaternion Flow for Efficient and High-Quality Protein Backbone Generation}, 
-      author={Angxiao Yue and Zichong Wang and Hongteng Xu},
-      year={2025},
-      eprint={2502.14637},
-      archivePrefix={arXiv},
-      primaryClass={cs.LG},
-      url={https://arxiv.org/abs/2502.14637}, 
-}
-```
 
 ## 👍 Acknowledgments
 Thanks to [FrameFlow](https://github.com/microsoft/protein-frame-flow?tab=readme-ov-file), [FrameDiff](https://github.com/jasonkyuyim/se3_diffusion), [FoldFlow](https://github.com/DreamFold/FoldFlow) for their great work and codebase, which served as the foundation for developing ReQFlow.
