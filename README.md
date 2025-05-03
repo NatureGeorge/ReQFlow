@@ -11,7 +11,7 @@
 </div>
 
 ## 📌 Citation
-If you find this work useful for your research, please consider citing it.
+If you find this work useful for your research, please consider citing it. 😊
 ```bibtex
 @misc{yue2025reqflowrectifiedquaternionflow,
       title={ReQFlow: Rectified Quaternion Flow for Efficient and High-Quality Protein Backbone Generation}, 
