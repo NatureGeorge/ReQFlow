@@ -10,6 +10,10 @@
 
 </div>
 
+<p align="center">
+  <img src="assets/combined_protein_flow_2x3_whiteBG.gif" alt="Protein Flow Animation" autoplay loop>
+</p>
+
 ## 📌 Citation
 If you find this work useful for your research, please consider citing it. 😊
 ```bibtex
