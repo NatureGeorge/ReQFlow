@@ -60,6 +60,8 @@ The script requires several command-line arguments for configuration.  Here's a 
 + `--database` (Optional): The database to use for FoldSeek (e.g., pdb). Defaults to pdb. 
 + `--type` (Optional): Type of evaluation (qflow, FrameFlow, FoldFlow, FrameDiff, Genie2, RFdiffusion). Defaults to qflow.
 
+According to the issue of FoldSeek mentioned in https://github.com/steineggerlab/foldseek/issues/323, we use the E-value column to report the TM-score. 
+
 **Notice**, to avoid potential issues, the script would delete unrelavent files in inference directory ('Reset' the folder). 
 Besides, running foldseek would use a huge amount of CPU cores. By default, the script utilize 50% of all cores. You can modify in line 96 of `run_foldseek_parallel.sh`.
 
