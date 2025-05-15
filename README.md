@@ -138,6 +138,10 @@ inference_outputs
         │   └── x0_traj_1.pdb           # x_0 model prediction trajectory
         └── sample_1                    # Next sample
 ```
+<p align="center">
+  <img src="assets/Self-Consistency.png" width="95%">
+</p>
+
 Based on this `inference_outputs`, we can compute Designability, Diversity and Novelty. More evaluation details to reproduce the paper results are [here](analysis/README.md).
 ## 📖 Train from Scratch
 ### Data preparation
