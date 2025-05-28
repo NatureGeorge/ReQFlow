@@ -8,6 +8,7 @@ inference:
   ckpt_path: ./ckpts/reqflow_pdb_rectify/reqflow_pdb_rectify.ckpt # path to ckpts (e.g., ..../xxx.ckpt)
   inference_subdir: ./inference_outputs/run_${now:%Y-%m-%d}_${now:%H-%M-%S} 
   pmpnn_dir: ./ProteinMPNN
+  esmfold_v1_dir: ./esmfold_v1
   pt_hub_dir: ./.cache/torch/ # path to ESMfold
   num_gpus: 4
   for_rectify: False

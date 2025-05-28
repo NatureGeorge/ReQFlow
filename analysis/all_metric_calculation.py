@@ -59,7 +59,8 @@ def file_generate(inference_dir, type=None):
                         csv_path = os.path.join(self_consistency_path, 'sc_results.csv')
                         
                         if os.path.isfile(csv_path):
-                            sc_results = pd.read_csv(csv_path, skiprows=[1])
+                            sc_results = pd.read_csv(csv_path) #pd.read_csv(csv_path, skiprows=[1])
+                            sc_results = sc_results[~sc_results.header.str.startswith('sample')].reset_index(drop=True)
                             sc_results = sc_results.rename(columns={'Unnamed: 0': 'ESMF_index', 'sample_path': 'ESMF_sample_path'})
 
                             sc_results.index = range(1, len(sc_results) + 1)

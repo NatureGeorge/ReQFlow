@@ -80,10 +80,12 @@ class EvalRunner:
         return output_dir
 
     def run_sampling(self):
-        # devices = GPUtil.getAvailable(
-        #     order='memory', limit = 8)[:self._infer_cfg.num_gpus]
+        devices = GPUtil.getAvailable(
+            order='memory', limit = 8)[:self._infer_cfg.num_gpus]
+        """
         devices = [0, 1, 2, 3]
         num_gpus = self._infer_cfg.num_gpus
+        """
         log.info(f"Using devices: {devices}")
         log.info(f'Evaluating {self._infer_cfg.task}')
         if self._infer_cfg.task == 'unconditional':

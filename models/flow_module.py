@@ -20,7 +20,7 @@ from data import so3_utils
 from data import residue_constants
 from experiments import utils as eu
 from pytorch_lightning.loggers.wandb import WandbLogger
-import esm
+#import esm
 from data import utils as du
 from data import residue_constants
 from biotite.sequence.io import fasta
@@ -56,8 +56,10 @@ class FlowModule(LightningModule):
             columns=['length', 'sample_path', 'start_time', 'sample_time', 'eval_time', 'total_time', 'memory_allocated', 'memory_reserved'])
         print("self._exp_cfg.is_training", self._exp_cfg.is_training)
         if not self._exp_cfg.is_training:
-            self._folding_model = esm.pretrained.esmfold_v1().eval()
-            self.save_hyperparameters(ignore=["_folding_model"]) 
+            from transformers import EsmForProteinFolding
+            self._folding_model = EsmForProteinFolding.from_pretrained(self._infer_cfg.esmfold_v1_dir).eval()#esm.pretrained.esmfold_v1().eval()
+            self._folding_model.trunk.set_chunk_size(256)
+            self.save_hyperparameters(ignore=["_folding_model"])
             for param in self._folding_model.parameters():
                 param.requires_grad = False
 
