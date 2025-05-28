@@ -1,17 +1,36 @@
 <div align=center>
 
-# ⚡️ReQFlow: Rectified Quaternion Flow for Efficient and High-Quality Protein Backbone Generation
+# ⚡️ReQFlow: Rectified Quaternion Flow for Efficient and High-Quality Protein Backbone Generation [ICML 2025]
+
 [![arXiv](https://img.shields.io/badge/arXiv-2502.14637-b31b1b?style=flat&logo=arxiv)](https://arxiv.org/abs/2502.14637)
 [![Hugging Face](https://img.shields.io/badge/Hugging%20Face-Model-orange?style=flat&logo=huggingface)](https://huggingface.co/AngxiaoYue/ReQFlow/tree/main)
 [![Checkpoint](https://img.shields.io/badge/Download-Checkpoint-brightgreen?style=flat&logo=google-drive)](https://drive.google.com/drive/folders/1HboOCWcE7KeNMkAZGR7Cq4wLQ8UhUKXy?usp=sharing)
 [![Project Page](https://img.shields.io/badge/Project-Website-blue?style=flat&logo=github)]()
 [![Try Demo](https://img.shields.io/badge/Try%20Demo-Online-orange?style=flat&logo=render)](https://your-demo-url.onrender.com)
 
-
 </div>
 
+<p align="center">
+  <img src="assets/combined_protein_flow_2x3_whiteBG.gif" alt="Protein Flow Animation" autoplay loop>
+</p>
+
+## 📌 Citation
+If you find this work useful for your research, please consider citing it. 😊
+```bibtex
+@misc{yue2025reqflowrectifiedquaternionflow,
+      title={ReQFlow: Rectified Quaternion Flow for Efficient and High-Quality Protein Backbone Generation}, 
+      author={Angxiao Yue and Zichong Wang and Hongteng Xu},
+      year={2025},
+      eprint={2502.14637},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG},
+      url={https://arxiv.org/abs/2502.14637}, 
+}
+```
+
 ## 🔥 News
-*   `2025/02/24` 💥 Our model weights are hosted on [Hugging Face](https://huggingface.co/AngxiaoYue/ReQFlow/tree/main) and [Google Drive](https://drive.google.com/drive/folders/1HboOCWcE7KeNMkAZGR7Cq4wLQ8UhUKXy?usp=sharing) now 😊.
+* `2025/05/02` 💥 <span style="color:red"><b>ReQFlow is accepted by ICML 2025！！🎉🎉</b></span>
+* `2025/02/24` 💥 Our model weights are hosted on [Hugging Face](https://huggingface.co/AngxiaoYue/ReQFlow/tree/main) and [Google Drive](https://drive.google.com/drive/folders/1HboOCWcE7KeNMkAZGR7Cq4wLQ8UhUKXy?usp=sharing) now 😊.
 * `2025/02/20` 💥 We release our work [ReQFlow](https://arxiv.org/abs/2502.14637) for efficient and high-quality protein backbone generation!
 
 
@@ -119,6 +138,10 @@ inference_outputs
         │   └── x0_traj_1.pdb           # x_0 model prediction trajectory
         └── sample_1                    # Next sample
 ```
+<p align="center">
+  <img src="assets/Self-Consistency.png" width="95%">
+</p>
+
 Based on this `inference_outputs`, we can compute Designability, Diversity and Novelty. More evaluation details to reproduce the paper results are [here](analysis/README.md).
 ## 📖 Train from Scratch
 ### Data preparation
@@ -168,19 +191,6 @@ python -W ignore experiments/train_se3_flows.py -cn train_pdb_rectify
 ```
 
 The training of SCOPe dataset is the same as PDB dataset.
-## 📌 Citation
-If you find this work useful for your research, please consider citing it.
-```bibtex
-@misc{yue2025reqflowrectifiedquaternionflow,
-      title={ReQFlow: Rectified Quaternion Flow for Efficient and High-Quality Protein Backbone Generation}, 
-      author={Angxiao Yue and Zichong Wang and Hongteng Xu},
-      year={2025},
-      eprint={2502.14637},
-      archivePrefix={arXiv},
-      primaryClass={cs.LG},
-      url={https://arxiv.org/abs/2502.14637}, 
-}
-```
 
 ## 👍 Acknowledgments
 Thanks to [FrameFlow](https://github.com/microsoft/protein-frame-flow?tab=readme-ov-file), [FrameDiff](https://github.com/jasonkyuyim/se3_diffusion), [FoldFlow](https://github.com/DreamFold/FoldFlow) for their great work and codebase, which served as the foundation for developing ReQFlow.

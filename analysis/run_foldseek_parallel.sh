@@ -64,15 +64,16 @@ process_pdb() {
         --exhaustive-search \
         --max-seqs 10000000000 \
         --tmscore-threshold 0.0 \
-        --format-output query,target,alntmscore,lddt
+        --format-output query,target,alntmscore,lddt,evalue
 
     if [ ! -f "$aln_file" ]; then
         echo "No alignment result for $pdb_path" >&2
         exit 0
     fi
 
-    # 提取最大TM-score
-    max_tmscore=$(awk '{if(NR>1) print $3}' "$aln_file" | sort -nr | head -1)
+    # Extract the maximum TM-score
+    # According to the issue of FoldSeek mentioned in \url{https://github.com/steineggerlab/foldseek/issues/323}, we use the E-value column to report the TM-score. 
+    max_tmscore=$(awk '{if(NR>1) print $5}' "$aln_file" | sort -nr | head -1)
     if [ -z "$max_tmscore" ]; then
         max_tmscore="N/A"
     fi
