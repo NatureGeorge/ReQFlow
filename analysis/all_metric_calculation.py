@@ -28,7 +28,7 @@ logging.basicConfig(
     ]
 )
 
-def file_generate(inference_dir, type=None):
+def file_generate(inference_dir, metric: str, type=None):
 
     def natural_sort_key(name):
         return int(''.join(filter(str.isdigit, name)) or 0)
@@ -68,14 +68,14 @@ def file_generate(inference_dir, type=None):
                             sc_results.insert(1, 'Model_sample_index', Model_sample_index)  
                             sc_results.insert(2, 'Model_sample_pdb_path', Model_sample_pdb_path)  
 
-                            if sc_results['rmsd'].min() < 2 :
+                            if sc_results[metric].min() < 2 :
                                 sc_results.insert(3, 'Designable', "True")
                             else:
                                 sc_results.insert(3, 'Designable', "False")
-                            sc_results.insert(5, 'min_rmsd', sc_results['rmsd'].min())
+                            sc_results.insert(5, f'min_{metric}', sc_results[metric].min())
                             sc_results.insert(6, 'max_tm_score', sc_results['tm_score'].max())
                             SinglePDB_Metrics_row.update({
-                                'min_rmsd': sc_results['rmsd'].min(),
+                                f'min_{metric}': sc_results[metric].min(),
                                 'max_tm_score': sc_results['tm_score'].max()
                             })
                             # put some not frequently used columns to the end
@@ -231,7 +231,7 @@ def plot_time(inference_dir, type):
 
 
 
-def designability_calculate(inference_dir):
+def designability_calculate(inference_dir, metric: str):
 
     All_Results = pd.read_csv(os.path.join(inference_dir, 'All_Results_Origin.csv'))
 
@@ -243,13 +243,13 @@ def designability_calculate(inference_dir):
     max_tm_score_std = All_Results['max_tm_score'].std()
     max_tm_score_greater_0_5_ratio = (All_Results['max_tm_score'] > 0.5).mean()
 
-    rmsd_mean = All_Results['rmsd'].mean()
-    rmsd_std = All_Results['rmsd'].std()
-    rmsd_below_2_ratio = (All_Results['rmsd'] < 2).mean()
+    rmsd_mean = All_Results[metric].mean()
+    rmsd_std = All_Results[metric].std()
+    rmsd_below_2_ratio = (All_Results[metric] < 2).mean()
 
-    min_rmsd_mean = All_Results['min_rmsd'].mean()
-    min_rmsd_std = All_Results['min_rmsd'].std()
-    min_rmsd_below_2_ratio = (All_Results['min_rmsd'] < 2).mean()
+    min_rmsd_mean = All_Results[f'min_{metric}'].mean()
+    min_rmsd_std = All_Results[f'min_{metric}'].std()
+    min_rmsd_below_2_ratio = (All_Results[f'min_{metric}'] < 2).mean()
     
     
     max_tm_score_per_length = []
@@ -257,7 +257,7 @@ def designability_calculate(inference_dir):
     grouped = All_Results.groupby('length')
     for length, group in grouped:
         max_tm_score_per_length.append((group['max_tm_score'] > 0.5).mean())
-        min_rmsd_per_length.append((group['min_rmsd'] < 2).mean())
+        min_rmsd_per_length.append((group[f'min_{metric}'] < 2).mean())
 
     grouped_tm_score_mean = np.mean(max_tm_score_per_length)
     grouped_tm_score_std = np.std(max_tm_score_per_length)
@@ -266,8 +266,8 @@ def designability_calculate(inference_dir):
 
 
     print("\n########### Designability Calculation End ###########")
-    print(f"grouped_rmsd_below_2_ratio: {grouped_rmsd_mean:.3f} ± {grouped_rmsd_std:.3f}\n\n")
-    print(f"min_rmsd_range: {min_rmsd_mean:.3f} ± {min_rmsd_std:.3f}\n")
+    print(f"grouped_{metric}_below_2_ratio: {grouped_rmsd_mean:.3f} ± {grouped_rmsd_std:.3f}\n\n")
+    print(f"min_{metric}_range: {min_rmsd_mean:.3f} ± {min_rmsd_std:.3f}\n")
     print(f"max_tm_score_range: {max_tm_score_mean:.3f} ± {max_tm_score_std:.3f}\n")
     print(f"grouped_tm_score_greater_0.5_ratio: {grouped_tm_score_mean:.3f} ± {grouped_tm_score_std:.3f}\n\n")
 
@@ -282,22 +282,22 @@ def designability_calculate(inference_dir):
     print(f"max_tm_score_greater_0_5_ratio: {max_tm_score_greater_0_5_ratio}\n")
     print(f"grouped_tm_score_greater_0.5_ratio: {grouped_tm_score_mean:.3f} ± {grouped_tm_score_std:.3f}\n")
 
-    print(f"rmsd_mean: {rmsd_mean}")
-    print(f"rmsd_std: {rmsd_std}")
-    print(f"rmsd_range: {rmsd_mean:.3f} ± {rmsd_std:.3f}")
-    print(f"rmsd_below_2_ratio: {rmsd_below_2_ratio}\n")
+    print(f"{metric}_mean: {rmsd_mean}")
+    print(f"{metric}_std: {rmsd_std}")
+    print(f"{metric}_range: {rmsd_mean:.3f} ± {rmsd_std:.3f}")
+    print(f"{metric}_below_2_ratio: {rmsd_below_2_ratio}\n")
 
-    print(f"min_rmsd_mean: {min_rmsd_mean}")
-    print(f"min_rmsd_std: {min_rmsd_std}")
-    print(f"min_rmsd_range: {min_rmsd_mean:.3f} ± {min_rmsd_std:.3f}")
-    print(f"min_rmsd_below_2_ratio: {min_rmsd_below_2_ratio}")
-    print(f"grouped_rmsd_below_2_ratio: {grouped_rmsd_mean:.3f} ± {grouped_rmsd_std:.3f}")
+    print(f"min_{metric}_mean: {min_rmsd_mean}")
+    print(f"min_{metric}_std: {min_rmsd_std}")
+    print(f"min_{metric}_range: {min_rmsd_mean:.3f} ± {min_rmsd_std:.3f}")
+    print(f"min_{metric}_below_2_ratio: {min_rmsd_below_2_ratio}")
+    print(f"grouped_{metric}_below_2_ratio: {grouped_rmsd_mean:.3f} ± {grouped_rmsd_std:.3f}")
     print("\n")
 
     with open(os.path.join(inference_dir, "Metrics.txt"), "a") as f:
         f.write("\n########### Designability Calculation ###########\n")
-        f.write(f"grouped_rmsd_below_2_ratio: {grouped_rmsd_mean:.3f} ± {grouped_rmsd_std:.3f}\n")
-        f.write(f"min_rmsd_range: {min_rmsd_mean:.3f} ± {min_rmsd_std:.3f}\n")
+        f.write(f"grouped_{metric}_below_2_ratio: {grouped_rmsd_mean:.3f} ± {grouped_rmsd_std:.3f}\n")
+        f.write(f"min_{metric}_range: {min_rmsd_mean:.3f} ± {min_rmsd_std:.3f}\n")
         f.write(f"max_tm_score_range: {max_tm_score_mean:.3f} ± {max_tm_score_std:.3f}\n")
         f.write(f"grouped_tm_score_greater_0.5_ratio: {grouped_tm_score_mean:.3f} ± {grouped_tm_score_std:.3f}\n\n")
 
@@ -312,16 +312,16 @@ def designability_calculate(inference_dir):
         f.write(f"max_tm_score_greater_0_5_ratio: {max_tm_score_greater_0_5_ratio}\n\n")
         f.write(f"grouped_tm_score_greater_0.5_ratio: {grouped_tm_score_mean:.3f} ± {grouped_tm_score_std:.3f}\n\n")
         
-        f.write(f"rmsd_mean: {rmsd_mean}\n")
-        f.write(f"rmsd_std: {rmsd_std}\n")
-        f.write(f"rmsd_range: {rmsd_mean:.3f} ± {rmsd_std:.3f}\n")
-        f.write(f"rmsd_below_2_ratio: {rmsd_below_2_ratio}\n\n")
+        f.write(f"{metric}_mean: {rmsd_mean}\n")
+        f.write(f"{metric}_std: {rmsd_std}\n")
+        f.write(f"{metric}_range: {rmsd_mean:.3f} ± {rmsd_std:.3f}\n")
+        f.write(f"{metric}_below_2_ratio: {rmsd_below_2_ratio}\n\n")
         
-        f.write(f"min_rmsd_mean: {min_rmsd_mean}\n")
-        f.write(f"min_rmsd_std: {min_rmsd_std}\n")
-        f.write(f"min_rmsd_range: {min_rmsd_mean:.3f} ± {min_rmsd_std:.3f}\n")
-        f.write(f"min_rmsd_below_2_ratio: {min_rmsd_below_2_ratio}\n")
-        f.write(f"grouped_rmsd_below_2_ratio: {grouped_rmsd_mean:.3f} ± {grouped_rmsd_std:.3f}\n\n")
+        f.write(f"min_{metric}_mean: {min_rmsd_mean}\n")
+        f.write(f"min_{metric}_std: {min_rmsd_std}\n")
+        f.write(f"min_{metric}_range: {min_rmsd_mean:.3f} ± {min_rmsd_std:.3f}\n")
+        f.write(f"min_{metric}_below_2_ratio: {min_rmsd_below_2_ratio}\n")
+        f.write(f"grouped_{metric}_below_2_ratio: {grouped_rmsd_mean:.3f} ± {grouped_rmsd_std:.3f}\n\n")
 
 def calc_tm_score_wrapper(feats_pair):
     feats_1, feats_2 = feats_pair
@@ -635,6 +635,7 @@ if __name__ == "__main__":
     # Optional arguments with defaults
     parser.add_argument("--database", default="pdb", help="Database to use (e.g., pdb).")
     parser.add_argument("--type", default="qflow", help="Type of evaluation (qflow, FrameFlow, FoldFlow, FrameDiff, Genie2, RFdiffusion).")
+    parser.add_argument("--metric", default="mad", help="Type of evaluation metric (rmsd, mad).")
 
 
     args = parser.parse_args()
@@ -648,9 +649,9 @@ if __name__ == "__main__":
 
     start_time = time.time()
     clean_folder(inference_dir)
-    file_generate(inference_dir, type=type)
+    file_generate(inference_dir, type=type, metric=args.metric)
     plot_time(inference_dir, type=type)
-    designability_calculate(inference_dir)
+    designability_calculate(inference_dir, metric=args.metric)
     calc_additional_metrics(inference_dir, type, base_dir=None, time_folder=None, length_values=None)
 
     run_foldseek(inference_dir, script_path, output_dir, database, dataset_dir=dataset_dir)
