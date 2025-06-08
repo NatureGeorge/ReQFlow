@@ -23,7 +23,7 @@ echo "Result summary: $result_summary"
 mkdir -p "$output_dir"
 
 # Write the header to the result summary file
-echo -e "PDB File,Max TM-score,Designable" > "$result_summary"
+echo -e "PDB File,Max TM-score,Designable,Max TM-score (previous)" > "$result_summary"
 
 tmp_result_dir="${output_dir}/parallel_results"
 mkdir -p "$tmp_result_dir"
@@ -73,10 +73,24 @@ process_pdb() {
 
     # Extract the maximum TM-score
     # According to the issue of FoldSeek mentioned in \url{https://github.com/steineggerlab/foldseek/issues/323}, we use the E-value column to report the TM-score. 
-    max_tmscore=$(awk '{if(NR>1) print $5}' "$aln_file" | sort -nr | head -1)
-    if [ -z "$max_tmscore" ]; then
-        max_tmscore="N/A"
-    fi
+    head -1 "$aln_file"
+    echo "The first line of the aln_file is shown above."
+
+    read -r max_tmscore_previous max_tmscore < <(
+    awk 'NR>1 {
+            if (NR==2) {
+                max3 = $3
+                max5 = $5
+            } else {
+                if ($3 > max3) max3 = $3
+                if ($5 > max5) max5 = $5
+            }
+        } END {
+            if (NR > 1) print max3, max5
+        }' "$aln_file"
+    )
+    max_tmscore_previous=${max_tmscore_previous:-"N/A"}
+    max_tmscore=${max_tmscore:-"N/A"}
 
     if grep -xFq "$pdb_path" "$designable_list"; then
         designable=1
@@ -84,7 +98,7 @@ process_pdb() {
         designable=0
     fi
 
-    echo -e "$pdb_path,$max_tmscore,$designable" > "${tmp_result_dir}/${pdb_name}_result.csv"
+    echo -e "$pdb_path,$max_tmscore,$designable,$max_tmscore_previous" > "${tmp_result_dir}/${pdb_name}_result.csv"
 
     rm -rf "$tmp_folder"
     rm -f "$aln_file"
